@@ -1,0 +1,21 @@
+produit
+Big Mac
+Big Tasty
+Mc Chicken
+Mc Fish
+Mc Extreme
+Royal Deluxe
+Cheese
+
+Accompagnements
+Frites
+Potatoes
+Frites Double chedar
+Potatoes Double chedar
+
+Boissons
+Coca-Cola
+Sprite
+Fanta
+IceTea
+Eau
