@@ -108,6 +108,10 @@ let produits = document.getElementById("produits");
 let accompagnements = document.getElementById("accompagnements");
 let boissons = document.getElementById("boissons");
 
+let produit = document.getElementById("produitSelectionne");
+let accompagnement = document.getElementById("accompagnementSelectionne");
+let boisson = document.getElementById("boissonSelectionne");
+
 function jsonOnLoad() {
   fetch(
     "http://localhost/test_stage/php/api.php"
@@ -145,45 +149,69 @@ function jsonOnLoad() {
     });
 }
 
+// function showProduit(produit) {
+//   let produitDiv = document.createElement("div");
+//   produitDiv.setAttribute("class", "card");
+//   produitDiv.setAttribute(
+//     "onclick",
+//     `ajouterAuPanier('${produit.prod_libelle}', ${produit.prod_prix})`
+//   );
+//   produitDiv.innerHTML = `
+//     <img src="${produit.prod_img}" alt="${produit.prod_libelle}" width="">
+//      <h4>${produit.prod_libelle}</h4>
+//      <p>Prix: ${produit.prod_prix} €</p>
+//      <p>Description: ${produit.prod_description}</p>
+//      <label for="quantite_produit">Quantité Produit:</label>
+//      <input type="number" id="quantite_produit" name="quantite_produit">`;
+//   produits.appendChild(produitDiv);
+// }
+
 function showProduit(produit) {
   let produitDiv = document.createElement("div");
   produitDiv.setAttribute("class", "card");
-  produitDiv.setAttribute(
-    "onclick",
-    `ajouterAuPanier('${produit.prod_libelle}', ${produit.prod_prix})`
-  );
-  produitDiv.innerHTML = `
-    <img src="${produit.prod_img}" alt="${produit.prod_libelle}" width="">
-     <h4>${produit.prod_libelle}</h4> 
-     <p>Prix: ${produit.prod_prix} €</p> 
-     <p>Description: ${produit.prod_description}</p>`;
-  produits.appendChild(produitDiv);
+  produitDiv.innerHTML = ` <img src="${produit.prod_img}" alt="${produit.prod_libelle}" width=""> 
+  <h4 id="produitSelectionne">${produit.prod_libelle}</h4> 
+  <p>Prix: ${produit.prod_prix} €</p> 
+  <p>Description: ${produit.prod_description}</p> 
+  <label for="quantite_${produit.prod_id}">Quantité Produit:</label> 
+  <input type="number" id="quantite_${produit.prod_id}" name="quantite_produit" min="1" value="1"> 
+  <button onclick="ajouterAuPanier('${produit.prod_libelle}', ${produit.prod_prix}, 
+    document.getElementById('quantite_${produit.prod_id}').value)">Ajouter au panier</button>`;
+  document.getElementById("produits").appendChild(produitDiv);
 }
 
 function showAccompa(accompagnement) {
   let accompagnementDiv = document.createElement("div");
   accompagnementDiv.setAttribute("class", "card");
-  accompagnementDiv.setAttribute(
-    "onclick",
-    `ajouterAuPanier('${accompagnement.a_libelle}', ${accompagnement.a_prix})`
-  );
+  // accompagnementDiv.setAttribute(
+  //   "onclick",
+  //   `ajouterAuPanier('${accompagnement.a_libelle}', ${accompagnement.a_prix})`
+  // );
   accompagnementDiv.innerHTML = `
-    <img src="${accompagnement.a_img}" alt="${accompagnement.a_libelle}" width="100">
-    <h4>${accompagnement.a_libelle}</h4>
-    <p>Prix: ${accompagnement.a_prix} €</p>`;
+  <img src="${accompagnement.a_img}" alt="${accompagnement.a_libelle}" width="100">
+  <h4 id="accompagnementSelectionne">${accompagnement.a_libelle}</h4>
+  <p>Prix: ${accompagnement.a_prix} €</p>
+  <label for="quantite_${accompagnement.a_id}">Quantité Accompagnement:</label> 
+  <input type="number" id="quantite_${accompagnement.a_id}" name="quantite_accompagnement" min="1" value="1"> 
+  <button onclick="ajouterAuPanier('${accompagnement.a_libelle}', ${accompagnement.a_prix}, 
+    document.getElementById('quantite_${accompagnement.a_id}').value)">Ajouter au panier</button>`;
   accompagnements.appendChild(accompagnementDiv);
 }
 
 function showBsn(boisson) {
   let boissonDiv = document.createElement("div");
   boissonDiv.setAttribute("class", "card");
-  boissonDiv.setAttribute(
-    "onclick",
-    `ajouterAuPanier('${boisson.bsn_libelle}', ${boisson.bsn_prix})`
-  );
+  // boissonDiv.setAttribute(
+  //   "onclick",
+  //   `ajouterAuPanier('${boisson.bsn_libelle}', ${boisson.bsn_prix})`
+  // );
   boissonDiv.innerHTML = `<img src="${boisson.bsn_img}" class="card-img-center" alt="${boisson.bsn_libelle}" width="100">
-    <h4>${boisson.bsn_libelle}</h4>
-    <p>Prix: ${boisson.bsn_prix} €</p>`;
+    <h4 id="boissonSelectionne">${boisson.bsn_libelle}</h4>
+    <p>Prix: ${boisson.bsn_prix} €</p>
+    <label for="quantite_${boisson.bsn_id}">Quantité Boisson:</label> 
+  <input type="number" id="quantite_${boisson.bsn_id}" name="quantite_boisson" min="1" value="1"> 
+  <button onclick="ajouterAuPanier('${boisson.bsn_libelle}', ${boisson.bsn_prix}, 
+    document.getElementById('quantite_${boisson.bsn_id}').value)">Ajouter au panier</button>`;
   boissons.appendChild(boissonDiv);
 }
 
@@ -194,9 +222,9 @@ document.addEventListener("DOMContentLoaded", function () {
 let panier = [];
 let total = 0;
 
-function ajouterAuPanier(nom, prix,) {
-  panier.push({ nom: nom, prix: prix});
-  total += prix;
+function ajouterAuPanier(nom, prix, quantite) {
+  panier.push({ nom: nom, prix: prix, quantite: quantite });
+  total += prix * quantite;
   afficherPanier();
 }
 
@@ -205,22 +233,55 @@ function afficherPanier() {
   listePanier.innerHTML = "";
   panier.forEach((item) => {
     const li = document.createElement("li");
-    li.textContent = `${item.nom} - ${item.prix}€ `;
+    li.textContent = `${item.quantite} - ${item.nom} - ${item.prix}€ l'unité `;
     listePanier.appendChild(li);
   });
   document.getElementById("total").textContent = total;
 }
 
 document.getElementById("form").addEventListener("submit", function (event) {
-    event.preventDefault();
-    envoyerPanier();
-  });
+  event.preventDefault();
+  envoyerPanier();
+});
 
 function envoyerPanier() {
+  // let quantite_produit = document.getElementById("quantite_${produit.prod_id}");
+  // let quantite_accompagnement = document.getElementById("quantite_${accompagnement.a_id}");
+  // let quantite_boisson = document.getElementById("quantite_${boisson.bsn_id}");
+
+  let quantite_produit = document
+    .querySelectorAll("[id^='quantite_']")
+    .forEach((input) => {
+      if (input.name === "quantite_produit") {
+        return input.value;
+      }
+    });
+  let quantite_accompagnement = document
+    .querySelectorAll("[id^='quantite_']")
+    .forEach((input) => {
+      if (input.name === "quantite_accompagnement") {
+        return input.value;
+      }
+    });
+  let quantite_boisson = document
+    .querySelectorAll("[id^='quantite_']")
+    .forEach((input) => {
+      if (input.name === "quantite_boisson") {
+        return input.value;
+      }
+    });
+
   fetch("http://localhost/test_stage/php/post.php", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ panier: panier, total: total }),
+    body: JSON.stringify({
+      produit: produit,
+      quantite_produit: quantite_produit,
+      accompagnement: accompagnement,
+      quantite_accompagnement: quantite_accompagnement,
+      boisson: boisson,
+      quantite_boisson: quantite_boisson,
+    }),
   })
     .then((response) => response.json())
     .then((data) => {
@@ -230,3 +291,45 @@ function envoyerPanier() {
       console.error("Erreur:", error);
     });
 }
+
+// function envoyerPanier() {
+//   let quantite_produit = document
+//     .querySelectorAll("[id^='quantite_']")
+//     .forEach((input) => {
+//       if (input.name === "quantite_produit") {
+//         return input.value;
+//       }
+//     });
+//   let quantite_accompagnement = document
+//     .querySelectorAll("[id^='quantite_']")
+//     .forEach((input) => {
+//       if (input.name === "quantite_accompagnement") {
+//         return input.value;
+//       }
+//     });
+//   let quantite_boisson = document
+//     .querySelectorAll("[id^='quantite_']")
+//     .forEach((input) => {
+//       if (input.name === "quantite_boisson") {
+//         return input.value;
+//       }
+//     });
+//   fetch("http://localhost/test_stage/php/post.php", {
+//     method: "POST",
+//     headers: { "Content-Type": "application/json" },
+//     body: JSON.stringify({
+//       panier: panier,
+//       total: total,
+//       quantite_produit: quantite_produit,
+//       quantite_accompagnement: quantite_accompagnement,
+//       quantite_boisson: quantite_boisson,
+//     }),
+//   })
+//     .then((response) => response.json())
+//     .then((data) => {
+//       console.log("Succès:", data);
+//     })
+//     .catch((error) => {
+//       console.error("Erreur:", error);
+//     });
+// }

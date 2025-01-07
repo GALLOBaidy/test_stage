@@ -1,4 +1,4 @@
-create database mcdo1; 
+create database mcdo1;
 use mcdo1;
 
 CREATE TABLE Produit(
@@ -26,43 +26,38 @@ CREATE TABLE Boisson(
    PRIMARY KEY(bsn_id)
 );
 
-CREATE TABLE Adresse(
-   adr_id INT auto_increment,
-   adr_rue VARCHAR(150) NOT NULL,
-   adr_ville VARCHAR(150) NOT NULL,
-   adr_cp VARCHAR(50) NOT NULL,
-   PRIMARY KEY(adr_id)
-);
-
-CREATE TABLE Client(
-   clt_id INT auto_increment,
-   clt_prenom VARCHAR(50) NOT NULL,
-   clt_nom VARCHAR(50) NOT NULL,
-   adr_id INT NOT NULL,
-   PRIMARY KEY(clt_id),
-   FOREIGN KEY(adr_id) REFERENCES Adresse(adr_id)
-);
-
 CREATE TABLE Commande(
    cmd_id INT auto_increment,
+   cmd_total DECIMAL(15,2) NOT NULL,
    cmd_date DATETIME NOT NULL,
-   clt_id INT NOT NULL,
-   PRIMARY KEY(cmd_id),
-   FOREIGN KEY(clt_id) REFERENCES Client(clt_id)
+   PRIMARY KEY(cmd_id)
 );
 
-CREATE TABLE Menu(
-   menu_id INT auto_increment,
-   menu_libelle VARCHAR(50) NOT NULL,
-   cmd_id INT NOT NULL,
-   bsn_id INT NOT NULL,
-   a_id INT NOT NULL,
-   prod_id INT NOT NULL,
-   PRIMARY KEY(menu_id),
-   FOREIGN KEY(cmd_id) REFERENCES Commande(cmd_id),
-   FOREIGN KEY(bsn_id) REFERENCES Boisson(bsn_id),
+CREATE TABLE prod_cmd(
+   prod_id INT,
+   cmd_id INT,
+   quantite INT NOT NULL,
+   PRIMARY KEY(prod_id, cmd_id),
+   FOREIGN KEY(prod_id) REFERENCES Produit(prod_id),
+   FOREIGN KEY(cmd_id) REFERENCES Commande(cmd_id)
+);
+
+CREATE TABLE a_cmd(
+   a_id INT,
+   cmd_id INT,
+   quantite INT NOT NULL,
+   PRIMARY KEY(a_id, cmd_id),
    FOREIGN KEY(a_id) REFERENCES Accompagnement(a_id),
-   FOREIGN KEY(prod_id) REFERENCES Produit(prod_id)
+   FOREIGN KEY(cmd_id) REFERENCES Commande(cmd_id)
+);
+
+CREATE TABLE bsn_cmd(
+   bsn_id INT,
+   cmd_id INT,
+   quantite INT NOT NULL,
+   PRIMARY KEY(bsn_id, cmd_id),
+   FOREIGN KEY(bsn_id) REFERENCES Boisson(bsn_id),
+   FOREIGN KEY(cmd_id) REFERENCES Commande(cmd_id)
 );
 
 insert into produit values 
@@ -79,10 +74,10 @@ insert into accompagnement values
 (3, 'Frites Double Chedar', 5.75, "https://eu-images.contentstack.com/v3/assets/blt5004e64d3579c43f/blt448a9f73a854302b/6570aae74bf0bf040a8ea9f9/McFlavors_Double_Cheddar_VAE_LAD.png?auto=webp"),
 (4, 'Potatoes Double Chedar', 5.50, "https://eu-images.contentstack.com/v3/assets/blt5004e64d3579c43f/bltd2b4028eab2a848c/662b96e8c43d2b1ebe8f1506/13550.jpg?width=1200&height=630&crop=1200:630"); 
 
-
 insert into boisson values
 (1, "Coca-Cola", 4, "https://mcdorivedroite.com/wp-content/uploads/2017/02/COCA.jpg"),
 (2, "Sprite", 4.30, "https://eu-images.contentstack.com/v3/assets/blt5004e64d3579c43f/blte12c314f20957f4f/66cc5adce0768f12f930ebc3/MOYEN_VERRE_SPRITE_GLOBAL_400x400px_72DPI.png?auto=webp"),
 (3, "Fanta", 4, "https://mcdonaldschampselysees.fr/wp-content/uploads/2022/11/FANTA.webp"),
 (4, "Ice Tea", 3.50, "https://mcdonaldschampselysees.fr/wp-content/uploads/2022/11/icetea.webp"),
 (5, "Eau", 2, "https://eu-images.contentstack.com/v3/assets/blt5004e64d3579c43f/blta66db817bb5642be/6217a599c27bcd6ae2b6b9f8/Cup_eau.png?auto=webp");
+
