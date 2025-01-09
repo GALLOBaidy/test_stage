@@ -4,7 +4,7 @@
 }
 
 body {
-  margin-bottom: 100px;
+  margin-bottom: 150px;
 }
 
 #bloc {
@@ -138,6 +138,11 @@ form {
   margin: 0;
 }
 
+.scrollable-list {
+  max-height: 80px;
+  overflow-y: auto;
+}
+
 #valider-commande {
   background-color: green;
   color: white;
@@ -150,4 +155,62 @@ form {
   margin: 4px 2px;
   cursor: pointer;
   border-radius: 5px;
+}
+
+.labelInline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 10px;
+  padding: 10px;
+  input {
+    width: 50px;
+  }
+}
+
+.btnAjout {
+  background-color: green;
+  color: #fff;
+  border: 1px solid green;
+  border-radius: 10px;
+  padding: 5px;
+}
+
+/* Modal */
+.modal {
+  display: none; /* Masquer la modal par défaut */
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgb(0, 0, 0);
+  background-color: rgba(0, 0, 0, 0.4);
+} 
+
+/* Contenu de la modal */
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+} 
+
+/* Bouton de fermeture */
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
 }

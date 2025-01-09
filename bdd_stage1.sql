@@ -36,7 +36,7 @@ CREATE TABLE Commande(
 CREATE TABLE prod_cmd(
    prod_id INT,
    cmd_id INT,
-   quantite INT NOT NULL,
+   quantite_produit INT NOT NULL,
    PRIMARY KEY(prod_id, cmd_id),
    FOREIGN KEY(prod_id) REFERENCES Produit(prod_id),
    FOREIGN KEY(cmd_id) REFERENCES Commande(cmd_id)
@@ -45,7 +45,7 @@ CREATE TABLE prod_cmd(
 CREATE TABLE a_cmd(
    a_id INT,
    cmd_id INT,
-   quantite INT NOT NULL,
+   quantite_accompagnement INT NOT NULL,
    PRIMARY KEY(a_id, cmd_id),
    FOREIGN KEY(a_id) REFERENCES Accompagnement(a_id),
    FOREIGN KEY(cmd_id) REFERENCES Commande(cmd_id)
@@ -54,7 +54,7 @@ CREATE TABLE a_cmd(
 CREATE TABLE bsn_cmd(
    bsn_id INT,
    cmd_id INT,
-   quantite INT NOT NULL,
+   quantite_boisson INT NOT NULL,
    PRIMARY KEY(bsn_id, cmd_id),
    FOREIGN KEY(bsn_id) REFERENCES Boisson(bsn_id),
    FOREIGN KEY(cmd_id) REFERENCES Commande(cmd_id)

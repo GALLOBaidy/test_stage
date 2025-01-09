@@ -41,11 +41,20 @@
       <div id="panier">
         <div id="panier-contenu">
           <h3>Panier</h3>
-          <ul id="liste-panier"></ul>
+          <ul id="liste-panier" class="scrollable-list"></ul>
           <p>Total : <span id="total">0</span>€</p>
         </div> <button type="submit" id="valider-commande">Valider commande</button>
       </div>
     </form>
+
+    <!-- Modal -->
+    <div id="recapModal" class="modal">
+      <div class="modal-content"> <span class="close">&times;</span>
+        <h2>Récapitulatif de la commande</h2>
+        <ul id="recap-list"></ul>
+        <p>Total: <span id="recap-total"></span> €</p>
+      </div>
+    </div>
 
   </main>
 
