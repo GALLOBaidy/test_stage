@@ -38,6 +38,8 @@ function jsonOnLoad() {
       );
       // Boucle pour afficher toutes les boissons
       data.boissons.forEach((boisson) => showBsn(boisson));
+      //Boucle pour afficher la commande
+      // data.commandes.forEach((commande) => afficherRecap(commande));
     })
     .catch((error) => {
       console.error("Error:", error);
@@ -128,6 +130,7 @@ form.addEventListener("submit", function (event) {
   envoyerPanier();
 });
 
+
 //Fonction qui va envoyer le panier
 function envoyerPanier() {
   let quantite_produit = Array.from(
@@ -163,38 +166,135 @@ function envoyerPanier() {
     .then((response) => response.json())
     .then((data) => {
       console.log("Succès:", data);
-      afficherRecap(data)
+      afficherRecap(data);
     })
     .catch((error) => {
       console.error("Erreur:", error);
     });
 }
 
-//Fonction qui va afficher une modal
 function afficherRecap(data) {
+
+  let soumission = false;
+
+
   // Affichage du récapitulatif dans la modal
   const recapList = document.getElementById("recap-list");
   recapList.innerHTML = "";
-  data.panier.forEach((item) => {
-    const li = document.createElement("li");
-    li.textContent = `${item.quantite} - ${item.nom} - ${item.prix}€ l'unité `;
-    recapList.appendChild(li);
-  });
-  document.getElementById("recap-total").textContent = data.total;
+  // Afficher les produits
+  if (Array.isArray(data.prod_cmd)) {
+    data.prod_cmd.forEach((item) => {
+      const li = document.createElement("li");
+      li.textContent = `Produit: ${item.quantite_produit} - ${item.prod_id}`;
+      recapList.appendChild(li);
+    });
+  }
+  // Afficher les accompagnements
+  if (Array.isArray(data.a_cmd)) {
+    data.a_cmd.forEach((item) => {
+      const li = document.createElement("li");
+      li.textContent = `Accompagnement: ${item.quantite_accompagnement} - ${item.a_id}`;
+      recapList.appendChild(li);
+    });
+  }
+  // Afficher les boissons
+  if (Array.isArray(data.bsn_cmd)) {
+    data.bsn_cmd.forEach((item) => {
+      const li = document.createElement("li");
+      li.textContent = `Boisson: ${item.quantite_boisson} - ${item.bsn_id}`;
+      recapList.appendChild(li);
+    });
+  }
+  // Afficher le total de la commande
+  document.getElementById("recap-total").textContent = data.commande.cmd_total;
+
   // Affichage de la modal
   const modal = document.getElementById("recapModal");
-  modal.style.display = "block";
-  // Fermeture de la modal
-  const span = document.getElementsByClassName("close")[0];
-  span.onclick = function () {
-    modal.style.display = "none";
-  };
-  window.onclick = function (event) {
-    if (event.target == modal) {
+  if (soumission = true) {
+    modal.style.display = "block";
+    // return;
+    
+    
+    // Fermeture de la modal
+    const span = document.getElementsByClassName("close")[0];
+    span.onclick = function () {
       modal.style.display = "none";
-    }
-  };
+    };
+    window.onclick = function (event) {
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+    };
+  }
 }
+
+// if (!Array.isArray(data.commande)) {
+//   data.commande = [];
+// }
+
+// function afficherRecap(commande) {
+//   if (!soumission) {
+//     return;
+//   }
+//   // Affichage du récapitulatif dans la modal
+//   const recapList = document.getElementById("recap-list");
+//   recapList.innerHTML = "";
+//   // if (Array.isArray(data.commande)) {
+//     for (let i = 0; i < commande.length; i++) {
+//       const item = commande[i];
+//       const li = document.createElement("li");
+//       li.textContent = `${item.quantite} - ${item.nom} - ${item.prix}€ l'unité `;
+//       recapList.appendChild(li);
+//     }
+//   // } else {
+//   //   console.error("data.Commande n'est pas défini ou n'est pas un tableau.");
+//   // }
+//   document.getElementById("recap-total").textContent = data.cmd_total;
+//   // Affichage de la modal
+//   const modal = document.getElementById("recapModal");
+//   modal.style.display = "block";
+//   // Fermeture de la modal
+//   const span = document.getElementsByClassName("close")[0];
+//   span.onclick = function () {
+//     modal.style.display = "none";
+//   };
+//   window.onclick = function (event) {
+//     if (event.target == modal) {
+//       modal.style.display = "none";
+//     }
+//   };
+// }
+// //Fonction qui va afficher une modal
+// function afficherRecap(data) {
+//   console.log(data);
+
+//   // Affichage du récapitulatif dans la modal
+//   const recapList = document.getElementById("recap-list");
+//   recapList.innerHTML = "";
+//   if (Array.isArray(data.panier)) {
+//     data.cmd.forEach((item) => {
+//       const li = document.createElement("li");
+//       li.textContent = `${item.quantite} - ${item.nom} - ${item.prix}€ l'unité `;
+//       recapList.appendChild(li);
+//     });
+//   } else {
+//     console.error("data.panier n'est pas défini ou n'est pas un tableau.");
+//   }
+//   document.getElementById("recap-total").textContent = data.total;
+//   // Affichage de la modal
+//   const modal = document.getElementById("recapModal");
+//   modal.style.display = "block";
+//   // Fermeture de la modal
+//   const span = document.getElementsByClassName("close")[0];
+//   span.onclick = function () {
+//     modal.style.display = "none";
+//   };
+//   window.onclick = function (event) {
+//     if (event.target == modal) {
+//       modal.style.display = "none";
+//     }
+//   };
+// }
 
 // let produit = document.getElementById("produits");
 // function jsonOnLoad() {

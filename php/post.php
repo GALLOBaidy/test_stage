@@ -12,24 +12,50 @@ $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) {
     die("Connexion échouée: " . $conn->connect_error);
 } // Récupérer les données POST 
-$produit = $_POST['produit'];
-$quantite_produit = $_POST['quantite_produit'];
-$accompagnement = $_POST['accompagnement'];
-$quantite_accompagnement = $_POST['quantite_accompagnement'];
-$boisson = $_POST['boisson'];
-$quantite_boisson = $_POST['quantite_boisson'];
+$produit = isset($_POST['produit']) ? $_POST['produit'] : '';
+$quantite_produit = isset($_POST['quantite_produit']) ? $_POST['quantite_produit'] : 0;
+$accompagnement = isset($_POST['accompagnement']) ? $_POST['accompagnement'] : '';
+$quantite_accompagnement = isset($_POST['quantite_accompagnement']) ? $_POST['quantite_accompagnement'] : 0;
+$boisson = isset($_POST['boisson']) ? $_POST['boisson'] : '';
+$quantite_boisson = isset($_POST['quantite_boisson']) ? $_POST['quantite_boisson'] : 0;
 
+// Récupérer les prix et les IDs depuis la base de données 
+$prod_prix = $a_prix = $bsn_prix = 0;
+$prod_id = $a_id = $bsn_id = 0;
 
 // Calculer le total (exemple simplifié) 
-$total = ($prod_prix * $quantite_produit) +
+$cmd_total = ($prod_prix * $quantite_produit) +
     ($a_prix * $quantite_accompagnement) +
     ($bsn_prix * $quantite_boisson);
 
+
+// Exemple de requête pour récupérer les informations des produits 
+$result = $conn->query("SELECT prod_id, prod_prix FROM Produit ");
+if ($result->num_rows > 0) {
+    $row = $result->fetch_assoc();
+    $prod_id = $row['prod_id'];
+    $prod_prix = $row['prod_prix'];
+}
+
+$result = $conn->query("SELECT a_id, a_prix FROM Accompagnement ");
+if ($result->num_rows > 0) {
+    $row = $result->fetch_assoc();
+    $a_id = $row['a_id'];
+    $a_prix = $row['a_prix'];
+}
+
+$result = $conn->query("SELECT bsn_id, bsn_prix FROM Boisson ");
+if ($result->num_rows > 0) {
+    $row = $result->fetch_assoc();
+    $bsn_id = $row['bsn_id'];
+    $bsn_prix = $row['bsn_prix'];
+}
+
 // Insérer les données dans la table Commande 
 $stmt = $conn->prepare("INSERT INTO Commande (cmd_total, cmd_date) VALUES (?, NOW())");
-$stmt->bind_param("d", $total);
+$stmt->bind_param("d", $cmd_total);
 $stmt->execute();
-$commande_id = $stmt->insert_id;
+$cmd_id = $stmt->insert_id;
 $stmt->close();
 
 // Insérer les produits dans la table prod_cmd 
@@ -45,14 +71,39 @@ $stmt->execute();
 $stmt->close();
 
 // Insérer les boissons dans la table bsn_cmd 
-$stmt = $conn->prepare("INSERT INTO bsn_cmd (bsn_id, cmd_id, quantite_accompagnement) VALUES (?, ?, ?)");
+$stmt = $conn->prepare("INSERT INTO bsn_cmd (bsn_id, cmd_id, quantite_boisson) VALUES (?, ?, ?)");
 $stmt->bind_param("iii", $bsn_id, $cmd_id, $quantite_boisson);
 $stmt->execute();
 $stmt->close();
 
+// Récupérer les données des accompagnements 
+$result_accompagnement = $conn->query("SELECT * FROM a_cmd WHERE cmd_id = $cmd_id");
+$a_cmd = $result_accompagnement->fetch_all(MYSQLI_ASSOC);
+
+// Récupérer les données des produits 
+$result_produit = $conn->query("SELECT * FROM prod_cmd WHERE cmd_id = $cmd_id");
+$prod_cmd = $result_produit->fetch_all(MYSQLI_ASSOC);
+
+// Récupérer les données des boissons 
+$result_boisson = $conn->query("SELECT * FROM bsn_cmd WHERE cmd_id = $cmd_id");
+$bsn_cmd = $result_boisson->fetch_all(MYSQLI_ASSOC);
+
+// Récupérer les données de la commande 
+$result = $conn->query("SELECT * FROM Commande WHERE cmd_id = $cmd_id");
+$commande = $result->fetch_assoc();
+
+
 // Fermer la connexion 
 $conn->close();
-echo json_encode(array("message" => "Commande passée avec succès"));
+echo json_encode(array(
+    "commande" => $commande,
+    "a_cmd" => $a_cmd,
+    "prod_cmd" => $prod_cmd,
+    "bsn_cmd" => $bsn_cmd
+));
+// echo $json_data;
+
+// echo json_encode(array("message" => "Commande passée avec succès"));
 
 // // Créer une connexion 
 // $conn = new mysqli($servername, $username, $password, $dbname);

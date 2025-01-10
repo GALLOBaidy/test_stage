@@ -27,7 +27,7 @@
     </section>
   </header>
   <main>
-    <form id="form" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+    <form id="form" action="http://localhost/test_stage/php/post.php" method="post">
       <h2>Produits disponibles</h2>
       <p>Veuillez choisir un produit</p>
       <div id="produits" class="menu"></div>

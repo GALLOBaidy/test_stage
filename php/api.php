@@ -31,6 +31,7 @@ function fetchData($conn, $table)
 $data['produits'] = fetchData($conn, 'produit');
 $data['accompagnements'] = fetchData($conn, 'accompagnement');
 $data['boissons'] = fetchData($conn, 'boisson');
+// $data['commandes'] = fetchData($conn, 'commande');
 // Fermer la connexion 
 $conn->close();
 // Renvoyer les données au format JSON 
